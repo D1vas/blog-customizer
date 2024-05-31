@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useState, CSSProperties } from 'react';
+import { useState, useEffect, CSSProperties } from 'react';
 
 import {
 	ArticleStateType,
@@ -14,6 +14,16 @@ export const App = () => {
 	const [appState, setAppState] =
 		useState<ArticleStateType>(defaultArticleState);
 
+	const [loading, setLoading] = useState(true);
+
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			setLoading(false);
+		}, 2000);
+
+		return () => clearTimeout(timer);
+	}, []);
+
 	return (
 		<div
 			className={clsx(styles.main)}
@@ -26,8 +36,14 @@ export const App = () => {
 					'--bg-color': appState.backgroundColor.value,
 				} as CSSProperties
 			}>
-			<ArticleParamsForm setAppState={setAppState} />
-			<Article />
+			{loading ? (
+				<div className={styles.loading}>Loading...</div>
+			) : (
+				<>
+					<ArticleParamsForm setAppState={setAppState} />
+					<Article />
+				</>
+			)}
 		</div>
 	);
 };
